@@ -1,0 +1,11 @@
+{
+  "name": "touchless-ppt-controller",
+  "version": "0.2.0-beta.3",
+  "license": "AGPL-3.0",
+  "private": true,
+  "description": "Touchless PowerPoint control using a local YOLO26 pose model.",
+  "scripts": {
+    "start": "node launcher.js"
+  }
+}
+

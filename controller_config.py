@@ -1,0 +1,28 @@
+from pathlib import Path
+from app_paths import CODE_ROOT, resource_path
+
+
+PROJECT_ROOT = CODE_ROOT
+MODEL_PATH = resource_path("models/yolo26s-pose.pt")
+ONNX_MODEL_PATH = resource_path("models/yolo26s-pose.onnx")
+
+CAMERA_INDEX = 0
+CAMERA_WIDTH = 1280
+CAMERA_HEIGHT = 720
+IMAGE_SIZE = 640
+DETECTION_CONFIDENCE = 0.42
+KEYPOINT_CONFIDENCE = 0.40
+
+RAISE_HOLD_SECONDS = 0.78
+CROSS_HOLD_SECONDS = 1.00
+NEUTRAL_REARM_SECONDS = 0.35
+ACTION_COOLDOWN_SECONDS = 0.75
+
+# Observation budgets do not change the user's explicit lock/unlock choice.
+GESTURE_DROPOUT_GRACE_SECONDS = 0.30
+MAX_OBSERVATION_GAP_SECONDS = 3.0
+MAX_FRAME_AGE_SECONDS = 0.50
+MAX_INFERENCE_AGE_SECONDS = 3.0
+MAX_COMMAND_AGE_SECONDS = 0.50
+CAMERA_RETRY_DELAYS = (0.5, 1.0, 2.0)
+

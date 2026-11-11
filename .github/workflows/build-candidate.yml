@@ -1,0 +1,47 @@
+name: Build Windows candidate (no public release)
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  candidate:
+    runs-on: windows-2022
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+        with:
+          python-version: '3.12.13'
+      - name: Install export dependencies
+        run: python -m pip install -r requirements/export-lock.txt
+      - name: Fetch and export the pinned checkpoint
+        run: |
+          python tools/fetch_model.py
+          python tools/export_model.py
+      - name: Create isolated runtime build environment
+        run: |
+          python -m venv .venv-release
+          .venv-release\Scripts\python.exe -m pip install -r requirements/build-lock.txt
+      - name: Synthetic regression and local-model checks
+        run: |
+          .venv-release\Scripts\python.exe tools/run_checks.py
+          .venv-release\Scripts\python.exe ppt_controller.py --self-check --backend onnx
+      - name: Build portable candidate
+        run: .venv-release\Scripts\python.exe tools/build_release.py
+      - name: Native component and synthetic layout checks
+        run: .venv-release\Scripts\python.exe tools/check_native_ui.py
+      - name: Upload review artifacts only
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: windows-x64-onnx-candidate
+          path: |
+            dist/*portable.zip
+            dist/SHA256SUMS.txt
+            validation/regression/automated.json
+            validation/ui-tray/native/native-checks.json
+          if-no-files-found: error
+
+# No GitHub Release write permissions, tag creation, publish step, camera or Office test.
